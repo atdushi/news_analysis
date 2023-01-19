@@ -83,7 +83,7 @@ hadoop fs -mkdir /news
 ### Структура
 
 ```bash
-├── news        # сырые данные в виде csv файлов
+├── news        # сырые данные
 └── user
   └── {user.name}
     └── oozie   # файлы с задачами для oozie
@@ -127,7 +127,7 @@ kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic foobar --fro
 
 Spark всегда запущен и в режиме реального времени получает данные из Kafka топика **foobar**.
 
-Сохраняет данные в папку **hdfs:///news** каждые 10 секунд в формате csv.
+Сохраняет данные в папку **hdfs:///news** каждые 10 секунд.
 
 Параллельно данные выводятся в консоль:
 

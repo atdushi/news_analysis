@@ -7,4 +7,4 @@ CREATE OR REPLACE TABLE de.news (
     site String,
     category String,
     title String) 
-ENGINE=HDFS('hdfs://localhost:9000/news/*', 'CSVWithNames');
+ENGINE=HDFS('hdfs://localhost:9000/news/*', 'JSONEachRow');

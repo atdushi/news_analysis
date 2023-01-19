@@ -49,10 +49,9 @@ object App {
           .save()
 
         df.write
-          .format("csv")
+          .format("json")
           .mode("append")
           .option("path", "hdfs://localhost:9000/news")
-          .option("header", true)
           .option("checkpointLocation", "/tmp/task1/checkpoint")
           .save()
 
