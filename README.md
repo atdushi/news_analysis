@@ -91,7 +91,7 @@ hadoop fs -mkdir /news
 
 ## Oozie
 
-Скопируем файлы *coordinator.xml* и *workflow.xml* из папки [oozie](./oozie/) в HDFS папку *hdfs://localhost:9000/user/${user.name}/oozie/apps/ssh*, и локально запустим job.
+Скопируем файлы **coordinator.xml** и **workflow.xml** из папки [oozie](./oozie/) в HDFS папку **hdfs://localhost:9000/user/${user.name}/oozie/apps/ssh** и локально запустим job.
 
 ### Инициализация
 
@@ -111,7 +111,7 @@ oozie job -oozie http://localhost:11000/oozie -config ./job.properties -run
 
 ## Kafka
 
-Kakfa развернём с помощью [docker-compose.yml](./kafka/docker-compose.yml). Работать будем с топиком foobar. Некоторые команды, которые можно запустить на образе kafka из docker:
+Kakfa развернём с помощью [docker-compose.yml](./kafka/docker-compose.yml). Работать будем с топиком **foobar**. Некоторые команды, которые можно запустить на образе kafka из docker:
 
 ```bash
 kafka-topics.sh --bootstrap-server localhost:9092 --list
