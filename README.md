@@ -46,8 +46,81 @@
 
 Приведём все к единому виду. Для этого возьмём за основу категории из датасета [lenta.ru](https://github.com/yutkin/Lenta.Ru-News-Dataset/releases). Обучим модель и по заголовкам новостей будем определять их категорию.
 
-Oozie запускает RSS-парсер один раз в день. Каждой новости сопоставляется категория и новость отправляется в Kafka.
+Oozie запускает RSS-парсер один раз в день. Каждой новости сопоставляется категория, и новость отправляется в Kafka.
 
 Spark берёт новости из Kafka, делает дополнительные преобразования и сохраняет их в HDFS, откуда на них смотрит ClickHouse.
 
 Итоговая витрина строится в ClickHouse по запросу.
+
+Моё окружение:
+
+- [Hadoop 3.2.1](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html#Pseudo-Distributed_Operation) - нужен для организации озера данных на основе HDFS. 
+- [Oozie 5.2.1](https://oozie.apache.org/docs/5.2.1/DG_QuickStart.html) - простой планировщик. Ещё [инструкция](https://www.cloudduggu.com/oozie/installation/) по установке.
+- [Kafka 3.3.1](./kafka/) - no comments.
+- [Spark 3.3.1](https://spark.apache.org/downloads.html) - быстрая обработка данных, лучше чем MapReduce.
+- [ClickHouse 22.11.2](https://clickhouse.com/docs/ru/getting-started/install/) - можно настроить на папку в HDFS как в Hive Metastore. Быстро делает выборки.
+
+## HDFS
+
+### Инициализация
+
+```bash
+hdfs namenode -format
+
+start-dfs.sh
+
+hdfs dfsadmin -safemode leave
+
+hadoop fs -mkdir oozie
+hadoop fs -mkdir oozie/apps
+hadoop fs -mkdir oozie/apps/ssh
+
+hadoop fs -mkdir /news
+
+# если нужно остановить, то stop-dfs.sh
+```
+
+### Структура
+
+```bash
+├── news        # сырые данные в виде csv файлов
+└── user
+  └── {user.name}
+    └── oozie   # файлы с задачами для oozie
+```
+
+## Oozie
+
+Скопируем файлы *coordinator.xml* и *workflow.xml* из папки [oozie](./oozie/) в HDFS папку *hdfs://localhost:9000/user/${user.name}/oozie/apps/ssh*, и локально запустим job.
+
+### Инициализация
+
+```bash
+hadoop fs -put coordinator.xml oozie/apps/ssh
+hadoop fs -put workflow.xml oozie/apps/ssh
+
+oozied.sh start
+
+# если нужно остановить, то oozied.sh stop
+```
+### Запуск
+
+```bash
+oozie job -oozie http://localhost:11000/oozie -config ./job.properties -run
+```
+
+## Kafka
+
+Kakfa развернём с помощью [docker-compose.yml](./kafka/docker-compose.yml). Работать будем с топиком foobar. Некоторые команды, которые можно запустить на образе kafka из docker:
+
+```bash
+kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic foobar --from-beginning
+```
+
+## Spark
+
+
+
+## ClickHouse

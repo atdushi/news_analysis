@@ -1,0 +1,20 @@
+<workflow-app xmlns="uri:oozie:workflow:1.0" name="ssh-wf">
+    <start to="ssh"/>
+
+    <action name="ssh">
+        <ssh xmlns="uri:oozie:ssh-action:0.1">
+            <host>localhost</host>
+            <command>python3</command>
+            <args>${scriptPath}</args>
+            <capture-output/>
+        </ssh>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>SSH action failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>

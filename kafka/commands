@@ -1,0 +1,5 @@
+kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic foobar
+
+kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic foobar --from-beginning
