@@ -109,6 +109,10 @@ oozied.sh start
 oozie job -oozie http://localhost:11000/oozie -config ./job.properties -run
 ```
 
+Запущенную задачу можно увидеть по адресу http://localhost:11000/oozie/ во вкладке Coordinator Jobs
+
+![oozie](./images/oozie.png)
+
 ## Kafka
 
 Kakfa развернём с помощью [docker-compose.yml](./kafka/docker-compose.yml). Работать будем с топиком **foobar**. Некоторые команды, которые можно запустить на образе kafka из docker:
