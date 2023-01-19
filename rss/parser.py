@@ -42,7 +42,7 @@ df = parse()
 
 model = None
 
-with (open('/mnt/nvme/Projects/DataEngineer/news_analysis/lenta/models/knb_ppl_clf.pkl', 'rb')) as openfile:
+with (open('/mnt/nvme/Projects/DataEngineer/news_analysis/lenta.ru/models/knb_ppl_clf.pkl', 'rb')) as openfile:
     model = pickle.load(openfile)
 
 predicted_topics = model.predict(df['title'])
