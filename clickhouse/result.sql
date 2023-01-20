@@ -1,5 +1,6 @@
 with 1 as dataset
-select 
+select
+    row_number() over() id, -- eyewash
 	category,
 	count(*) "Всего новостей",
 	countIf(title, site='LENTA.RU') "LENTA.RU",
