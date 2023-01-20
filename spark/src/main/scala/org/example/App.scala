@@ -30,7 +30,7 @@ object App {
     ds1
       .selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)", "topic", "partition", "offset")
       .writeStream
-      .trigger(ProcessingTime("10 seconds")) // save csv every 10 seconds
+      .trigger(ProcessingTime("10 seconds")) // save data every 10 seconds
       .foreachBatch((batchDF: DataFrame, batchId: Long) => {
         batchDF.persist()
 
