@@ -39,6 +39,7 @@ object App {
         val df = batchDF
           .select(
             get_json_object(col("value"), "$.pub_date").alias("pub_date"),
+            get_json_object(col("value"), "$.day_of_week").alias("day_of_week"),
             get_json_object(col("value"), "$.site").alias("site"),
             get_json_object(col("value"), "$.category").alias("category"),
             get_json_object(col("value"), "$.title").alias("title"))

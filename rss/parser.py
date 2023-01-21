@@ -54,9 +54,11 @@ df_news = pd.concat([pd.Series(predicted_topics), df], ignore_index=True, axis=1
 df_news = df_news.rename(columns={0: "category", 1: "title", 2: "pub_date", 3: "site"})
 
 df_news['parsed_date'] = None
+df_news['day_of_week'] = None
 for index, row in enumerate(df_news['pub_date']):
     parsed = time.strptime(row, "%a, %d %b %Y %H:%M:%S %z")
     df_news['parsed_date'][index] = time.strftime('%Y-%m-%d %H:%M:%S', parsed)
+    df_news['day_of_week'][index] = time.strftime('%a', parsed)
 
 # kafka
 
@@ -71,7 +73,8 @@ def write_to_kafka(df):
         hm["category"] = row["category"]
         hm["title"] = row["title"]
         hm["site"] = row["site"]
-        hm["pub_date"] = row["parsed_date"]        
+        hm["pub_date"] = row["parsed_date"]
+        hm["day_of_week"] = row["day_of_week"]        
         producer.send('foobar', json.dumps(hm).encode('utf-8'))
         producer.flush()
 
