@@ -46,24 +46,16 @@ order by a1.category;
 
 -- dataset 4
 with 
-	d as
+	grouped_news as
 	(
-		select category ,days as day_of_week
-		from
-		(
-			select category, ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as days
-			from news n 
-			group by category
-		)
-		array join days
-	),
-	g as
-	(
-		select category, day_of_week, count(*) news_count
+		select 
+			category, 
+			day_of_week, 
+			count(*) news_count
 		from news
 		group by category, day_of_week
 	),
-	days AS 
+	days_of_week AS 
 	(
 		select 'Mon' as day_of_week, 1 as ord
 		union all
@@ -78,9 +70,27 @@ with
 		select 'Sat' as day_of_week, 6 as ord
 		union all
 		select 'Sun' as day_of_week, 7 as ord
+	),
+	d as
+	(
+		select 
+			category,
+			days as day_of_week
+		from
+		(
+			select 
+				category, 
+				(select arrayReduce('groupUniqArray', groupArray(day_of_week)) from days_of_week) as days
+			from news n 
+			group by category
+		)
+		array join days
 	)
-select d.category, d.day_of_week, g.news_count
+select 
+	d.category as category, 
+	d.day_of_week as day_of_week, 
+	grouped_news.news_count as news_count
 from d
-join days on d.day_of_week=days.day_of_week
-left join g on d.category = g.category and d.day_of_week = g.day_of_week
-order by d.category, days.ord;
+join days_of_week on d.day_of_week=days_of_week.day_of_week
+left join grouped_news on d.category = grouped_news.category and d.day_of_week = grouped_news.day_of_week
+order by d.category, days_of_week.ord;
