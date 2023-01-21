@@ -168,3 +168,7 @@ Spark всегда запущен и в режиме реального врем
 - Витрины 1, 2:
 
   ![dataset12](./images/dataset_1_2.png)
+
+- Витрина 3:
+
+  ![dataset3](./images/dataset_3.png)
