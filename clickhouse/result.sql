@@ -39,4 +39,5 @@ select distinct
 	a2.max_news_count
 from aux1 a1
 join aux2 a2 on a1.category = a2.category
-where a1.news_count=a2.max_news_count;
+where a1.news_count=a2.max_news_count
+order by a1.category;
