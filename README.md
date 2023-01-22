@@ -76,9 +76,7 @@ start-dfs.sh
 
 hdfs dfsadmin -safemode leave
 
-hadoop fs -mkdir oozie
-hadoop fs -mkdir oozie/apps
-hadoop fs -mkdir oozie/apps/ssh
+hadoop fs -mkdir -p oozie/apps/ssh
 
 hadoop fs -mkdir /news
 
