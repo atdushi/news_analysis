@@ -137,6 +137,9 @@ In parallel, the data is output to the console:
 ## ClickHouse
 
 - **news** - news table
+- **news_topic** - Kafka topic
+- **news_target** - table from Kafka topic
+- **vw_news** - materialized view
 
 ![ER](images/er.png)
 
