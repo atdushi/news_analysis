@@ -4,6 +4,7 @@ import time
 import tqdm
 import pickle
 import pandas as pd
+import json
 
 sites = { 
     'Фонтанка.ру' : ['https://www.fontanka.ru/fontanka.rss', ''],                  
@@ -62,10 +63,10 @@ for index, row in enumerate(df_news['pub_date']):
 
 # kafka
 
-import json
 from kafka import KafkaProducer
 
 producer = KafkaProducer(bootstrap_servers='localhost:9092')
+topic = 'foobar'
 
 def write_to_kafka(df):
     hm = {}
@@ -75,7 +76,37 @@ def write_to_kafka(df):
         hm["site"] = row["site"]
         hm["pub_date"] = row["parsed_date"]
         hm["day_of_week"] = row["day_of_week"]        
-        producer.send('foobar', json.dumps(hm).encode('utf-8'))
+        producer.send(topic, json.dumps(hm).encode('utf-8'))
         producer.flush()
 
-write_to_kafka(df_news)
+# hbase
+
+import happybase
+
+connection = happybase.Connection('localhost')
+table = connection.table('news')
+
+def write_to_hbase(df):
+    for i, row in df.iterrows():
+        table.put(str.encode(str(i)), {
+            b"cf:category": str.encode(row["category"]),
+            b"cf:title": str.encode(row["title"]),
+            b"cf:site": str.encode(row["site"]),
+            b"cf:pub_date": str.encode(row["parsed_date"]),
+            b"cf:day_of_week": str.encode(row["day_of_week"])
+            })
+
+# enums
+
+from enum import Enum
+
+class DataLoadingMode(Enum):
+    Incremental = 1
+    Initializing = 2
+
+data_loading_mode = DataLoadingMode.Initializing
+
+if data_loading_mode == DataLoadingMode.Initializing:
+    write_to_hbase(df_news)
+else:
+    write_to_kafka(df_news)

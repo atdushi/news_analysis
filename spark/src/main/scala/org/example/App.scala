@@ -6,9 +6,57 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.sql.functions.{col, get_json_object}
 import org.apache.spark.sql.streaming.Trigger.ProcessingTime
 
+import org.apache.hadoop.hbase.spark.HBaseContext
+import org.apache.hadoop.conf.Configuration
+
 object App {
+  private object DataLoadingMode extends Enumeration {
+    val Incremental = Value
+    val Initializing = Value
+  }
+
+  private val DATA_LOADING_MODE = DataLoadingMode.Initializing
+
+  private val parse = Map[DataLoadingMode.Value, () => Unit](
+    DataLoadingMode.Incremental -> parseKafka,
+    DataLoadingMode.Initializing -> parseHBase)
+
   def main(args: Array[String]): Unit = {
-    parseKafka()
+    //    parseKafka()
+    //    parseHBase()
+
+    parse(DATA_LOADING_MODE)()
+  }
+
+  private def parseHBase(): Unit = {
+    val spark = SparkSession.builder()
+      .master("local[1]")
+      .appName("SparkByExample")
+      .getOrCreate()
+
+    spark.sparkContext.setLogLevel("ERROR")
+
+    val conf = new Configuration()
+    //    conf.set("hbase.zookeeper.quorum", "127.0.0.1:10231")
+
+    new HBaseContext(spark.sparkContext, conf)
+
+    val df = spark.read.format("org.apache.hadoop.hbase.spark")
+      .option("hbase.columns.mapping",
+        """rowKey STRING :key,
+          |category STRING cf:category,
+          |title STRING cf:title,
+          |site STRING cf:site,
+          |pub_date STRING cf:pub_date,
+          |day_of_week STRING cf:day_of_week""".stripMargin
+      )
+      .option("hbase.spark.pushdown.columnfilter", false)
+      .option("hbase.table", "news")
+      .load()
+
+    df.show()
+
+    df.write.mode("append").json("hdfs://localhost:9000/news")
   }
 
   private def parseKafka(): Unit = {

@@ -51,7 +51,7 @@ Let's bring everything to a single form. To do this, we will take as a basis the
 
 Oozie runs the RSS parser once a day. Each news is assigned a category and the news is sent to Kafka.
 
-Spark takes news from Kafka, does additional transformations and saves them to HDFS, where ClickHouse looks at them.
+Depending on the script mode (variable **data_loading_mode** in script **parser.py**), Spark either takes news from Kafka or from HBase, does additional transformations and saves them to HDFS, from where ClickHouse looks at them.
 
 The final storefront is built in ClickHouse upon request.
 
@@ -124,9 +124,41 @@ kafka-topics.sh --bootstrap-server localhost:9092 --list
 kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic foobar --from-beginning
 ```
 
+## HBase
+
+### HDFS initialization
+
+```bash
+./bin/start-all.sh
+./bin/start-dfs.sh
+./bin/start-yarn.sh
+./bin/hdfs dfsadmin -safemode leave
+```
+
+### Starting HBase
+
+```bash
+$ ./bin/hbase-start.sh
+$ ./bin/hbase thrift start
+$ ./bin/hbase shell
+
+hbase:001:0> create 'news', 'cf'
+```
+
+### Connector
+
+Let's take [HBase connector](https://github.com/apache/hbase-connectors/tree/master/spark) as a connector.
+
+First you need to collect it. Let's compile with the necessary versions:
+
+```bash
+mvn -Dspark.version=3.3.1 -Dscala.version=2.12.17 -Dscala.binary.version=2.12 -Dhbase.version=2.5.2 -Dhadoop.profile=3.0 -Dhadoop-three.version=3.2.1 -DskipTests -Dcheckstyle.skip -U clean package
+```
+
+
 ## Spark
 
-Spark is always running and gets real-time data from a Kafka topic **foobar**.
+Depending on the **DATA_LOADING_MODE** variable, Spark will either run in bootstrap mode from the HBase table **news** or stream continuously from the Kafka topic **foobar**.
 
 Saves data to the **hdfs:///news** folder every 10 seconds.
 

@@ -53,7 +53,7 @@
 
 Oozie запускает RSS-парсер один раз в день. Каждой новости сопоставляется категория, и новость отправляется в Kafka.
 
-Spark берёт новости из Kafka, делает дополнительные преобразования и сохраняет их в HDFS, откуда на них смотрит ClickHouse.
+В зависимости от режима загрузки (переменная **data_loading_mode** в скрипте **parser.py**), Spark либо берёт новости из Kafka, либо из HBase, делает дополнительные преобразования и сохраняет их в HDFS, откуда на них смотрит ClickHouse.
 
 Итоговая витрина строится в ClickHouse по запросу.
 
@@ -64,6 +64,7 @@ Spark берёт новости из Kafka, делает дополнитель�
 - [Kafka 3.3.1](./kafka/) - no comments.
 - [Spark 3.3.1](https://spark.apache.org/downloads.html) - быстрая обработка данных, лучше чем MapReduce.
 - [ClickHouse 22.11.2](https://clickhouse.com/docs/ru/getting-started/install/) - можно настроить на папку в HDFS как в Hive Metastore. Быстро делает выборки.
+- [HBase 2.5.2](https://hbase.apache.org/book.html#quickstart) - масштабируемая база данных. Ещё [инструкция](https://kontext.tech/article/628/spark-connect-to-hbase) по установке. Скачивать лучше [hbase-2.5.2-hadoop3-bin.tar.gz](https://dlcdn.apache.org/hbase/2.5.2/hbase-2.5.2-hadoop3-bin.tar.gz), чтобы были все необходимые библиотеки.
 
 ## HDFS
 
@@ -126,9 +127,40 @@ kafka-topics.sh --bootstrap-server localhost:9092 --list
 kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic foobar --from-beginning
 ```
 
+## HBase
+
+### Инициализация HDFS
+
+```bash
+./bin/start-all.sh
+./bin/start-dfs.sh
+./bin/start-yarn.sh
+./bin/hdfs dfsadmin -safemode leave
+```
+
+### Запуск HBase
+
+```bash
+$ ./bin/hbase-start.sh
+$ ./bin/hbase thrift start
+$ ./bin/hbase shell
+
+hbase:001:0> create 'news', 'cf'
+```
+
+### Коннектор
+
+В качестве коннектора возьмём [HBase connector](https://github.com/apache/hbase-connectors/tree/master/spark). 
+
+Для начала его нужно собрать. Соберём с учётом нужных версий:
+
+```bash
+mvn -Dspark.version=3.3.1 -Dscala.version=2.12.17 -Dscala.binary.version=2.12 -Dhbase.version=2.5.2 -Dhadoop.profile=3.0 -Dhadoop-three.version=3.2.1 -DskipTests -Dcheckstyle.skip -U clean package
+```
+
 ## Spark
 
-Spark всегда запущен и в режиме реального времени получает данные из Kafka топика **foobar**.
+В зависимости от переменной **DATA_LOADING_MODE** Spark будет работать либо в режиме начальной загрузки из HBase таблицы **news**, либо в режиме непрерывного стриминга из Kafka топика **foobar**.
 
 Сохраняет данные в папку **hdfs:///news** каждые 10 секунд.
 
