@@ -11,6 +11,7 @@ import org.apache.hadoop.conf.Configuration
 
 object App {
   private object DataLoadingMode extends Enumeration {
+    val Test = Value
     val Incremental = Value
     val Initializing = Value
   }
@@ -18,6 +19,7 @@ object App {
   private val DATA_LOADING_MODE = DataLoadingMode.Initializing
 
   private val parse = Map[DataLoadingMode.Value, () => Unit](
+    DataLoadingMode.Test -> streamTest,
     DataLoadingMode.Incremental -> parseKafka,
     DataLoadingMode.Initializing -> parseHBase)
 
@@ -110,7 +112,7 @@ object App {
       .awaitTermination(10000);
   }
 
-  private def streamTest(ssc: StreamingContext): Unit = {
+  private def streamTest(): Unit = {
     val conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount")
     val ssc = new StreamingContext(conf, Seconds(1))
     ssc.sparkContext.setLogLevel("ERROR")
