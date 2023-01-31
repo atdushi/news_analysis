@@ -1,10 +1,13 @@
+# HDFS
 start-all.sh
 start-dfs.sh
 start-yarn.sh
 hdfs dfsadmin -safemode leave
 
+# HBase
 hbase-start.sh
 hbase thrift start
 hbase shell
 
+# HBase shell
 create 'news', 'cf'
