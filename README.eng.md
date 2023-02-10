@@ -1,5 +1,11 @@
 # Analysis of published news
 
+<div align="center">
+
+![Logo](images/logo.png)
+
+</div>
+
 ## Общая задача
 
 Создать ETL-процесс формирования витрин данных для анализа публикаций новостей.<details>
