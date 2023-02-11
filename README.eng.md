@@ -69,7 +69,7 @@ My environment:
 - [Spark 3.3.1](https://spark.apache.org/downloads.html) - fast data processing, better than MapReduce.
 - [ClickHouse 22.11.2](https://clickhouse.com/docs/ru/getting-started/install/) - can be set to a folder in HDFS like in Hive Metastore. Makes quick selections.
 - [HBase 2.5.2](https://hbase.apache.org/book.html#quickstart) - scalable database. More [instruction](https://kontext.tech/article/628/spark-connect-to-hbase) for installation. It is better to download [hbase-2.5.2-hadoop3-bin.tar.gz](https://dlcdn.apache.org/hbase/2.5.2/hbase-2.5.2-hadoop3-bin.tar.gz) to have all the necessary libraries.
-- [Apache Drill 1.20.3](https://drill.apache.org/) - SQL запросы к HBase
+- [Apache Drill 1.20.3](https://drill.apache.org/) - columnar query engine
 
 ## HDFS
 

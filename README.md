@@ -71,7 +71,7 @@ Oozie запускает RSS-парсер один раз в день. Кажд�
 - [Spark 3.3.1](https://spark.apache.org/downloads.html) - быстрая обработка данных, лучше чем MapReduce.
 - [ClickHouse 22.11.2](https://clickhouse.com/docs/ru/getting-started/install/) - можно настроить на папку в HDFS как в Hive Metastore. Быстро делает выборки.
 - [HBase 2.5.2](https://hbase.apache.org/book.html#quickstart) - масштабируемая база данных. Ещё [инструкция](https://kontext.tech/article/628/spark-connect-to-hbase) по установке. Скачивать лучше [hbase-2.5.2-hadoop3-bin.tar.gz](https://dlcdn.apache.org/hbase/2.5.2/hbase-2.5.2-hadoop3-bin.tar.gz), чтобы были все необходимые библиотеки.
-- [Apache Drill 1.20.3](https://drill.apache.org/) - columnar query engine
+- [Apache Drill 1.20.3](https://drill.apache.org/) - SQL запросы к HBase
 
 ## HDFS
 
