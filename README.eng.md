@@ -145,7 +145,7 @@ kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic foobar --fro
 ### Starting HBase
 
 ```bash
-$ ./bin/hbase-start.sh
+$ ./bin/start-hbase.sh
 $ ./bin/hbase thrift start
 $ ./bin/hbase shell
 

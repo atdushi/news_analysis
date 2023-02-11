@@ -5,9 +5,16 @@ start-yarn.sh
 hdfs dfsadmin -safemode leave
 
 # HBase
-hbase-start.sh
+start-hbase.sh
 hbase thrift start
 hbase shell
 
 # HBase shell
 create 'news', 'cf'
+
+scan 'news', {LIMIT => 10, COLUMNS => ['cf:site', 'cf:category', 'cf:day_of_week']}
+
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.BinaryComparator
+scan 'news', { FILTER => SingleColumnValueFilter.new(Bytes.toBytes('cf'), Bytes.toBytes('site'), CompareFilter::CompareOp.valueOf('EQUAL'),BinaryComparator.new(Bytes.toBytes('LENTA.RU')))}
