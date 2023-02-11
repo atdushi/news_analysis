@@ -165,7 +165,7 @@ mvn -Dspark.version=3.3.1 -Dscala.version=2.12.17 -Dscala.binary.version=2.12 -D
 
 ## Drill
 
-Lets check the news table with Apache Drill
+Lets check the news table with Apache Drill.
 
 https://drill.apache.org/docs/querying-hbase/
 
