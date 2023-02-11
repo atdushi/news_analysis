@@ -162,6 +162,41 @@ First you need to collect it. Let's compile with the necessary versions:
 mvn -Dspark.version=3.3.1 -Dscala.version=2.12.17 -Dscala.binary.version=2.12 -Dhbase.version=2.5.2 -Dhadoop.profile=3.0 -Dhadoop-three.version=3.2.1 -DskipTests -Dcheckstyle.skip -U clean package
 ```
 
+## Drill
+
+Lets check the news table with Apache Drill
+
+https://drill.apache.org/docs/querying-hbase/
+
+```bash
+./bin/drill-embedded
+```
+
+Accessing the Web UI http://localhost:8047/
+
+Enable hbase on the storage tab.
+
+On the query tab, enter the query:
+
+```sql
+select 
+    CONVERT_FROM(news.cf.category, 'UTF8') as category,
+    CONVERT_FROM(news.cf.title, 'UTF8') as title,
+    CONVERT_FROM(news.cf.site, 'UTF8') as site,
+    CONVERT_FROM(news.cf.pub_date, 'UTF8') as pub_date,
+    CONVERT_FROM(news.cf.day_of_week, 'UTF8') as day_of_week
+from hbase.news limit 10;
+```
+
+<details>
+  <summary>Screenshots</summary>
+
+  ![drill](./images/drill.png)
+  ![drill](./images/drill_query.png)
+  ![drill](./images/drill_result.png)
+
+</details>
+
 
 ## Spark
 

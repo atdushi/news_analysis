@@ -71,6 +71,7 @@ Oozie запускает RSS-парсер один раз в день. Кажд�
 - [Spark 3.3.1](https://spark.apache.org/downloads.html) - быстрая обработка данных, лучше чем MapReduce.
 - [ClickHouse 22.11.2](https://clickhouse.com/docs/ru/getting-started/install/) - можно настроить на папку в HDFS как в Hive Metastore. Быстро делает выборки.
 - [HBase 2.5.2](https://hbase.apache.org/book.html#quickstart) - масштабируемая база данных. Ещё [инструкция](https://kontext.tech/article/628/spark-connect-to-hbase) по установке. Скачивать лучше [hbase-2.5.2-hadoop3-bin.tar.gz](https://dlcdn.apache.org/hbase/2.5.2/hbase-2.5.2-hadoop3-bin.tar.gz), чтобы были все необходимые библиотеки.
+- [Apache Drill 1.20.3](https://drill.apache.org/) - инструкция
 
 ## HDFS
 
@@ -163,6 +164,41 @@ hbase:001:0> create 'news', 'cf'
 ```bash
 mvn -Dspark.version=3.3.1 -Dscala.version=2.12.17 -Dscala.binary.version=2.12 -Dhbase.version=2.5.2 -Dhadoop.profile=3.0 -Dhadoop-three.version=3.2.1 -DskipTests -Dcheckstyle.skip -U clean package
 ```
+
+## Drill
+
+Проверим таблицу news с помощью Apache Drill
+
+https://drill.apache.org/docs/querying-hbase/
+
+```bash
+./bin/drill-embedded
+```
+
+Web UI находится по адресу http://localhost:8047/
+
+На вкладке storage включим hbase.
+
+На вкладке query введём запрос:
+
+```sql
+select 
+    CONVERT_FROM(news.cf.category, 'UTF8') as category,
+    CONVERT_FROM(news.cf.title, 'UTF8') as title,
+    CONVERT_FROM(news.cf.site, 'UTF8') as site,
+    CONVERT_FROM(news.cf.pub_date, 'UTF8') as pub_date,
+    CONVERT_FROM(news.cf.day_of_week, 'UTF8') as day_of_week
+from hbase.news limit 10;
+```
+
+<details>
+  <summary>Screenshots</summary>
+
+  ![drill](./images/drill.png)
+  ![drill](./images/drill_query.png)
+  ![drill](./images/drill_result.png)
+
+</details>
 
 ## Spark
 
