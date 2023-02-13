@@ -14,8 +14,8 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.15" % Test,
   "com.holdenkarau" %% "spark-testing-base" % "3.3.1_1.4.0" % Test,
 
-  "org.apache.hbase.connectors.spark" % "hbase-spark" % "1.0.1-SNAPSHOT"
-    from "file:///mnt/nvme/Projects/DataEngineer/news_analysis/spark/lib/hbase-spark-1.0.1-SNAPSHOT.jar"
+//  "org.apache.hbase.connectors.spark" % "hbase-spark" % "1.0.1-SNAPSHOT"
+//    from "file:///mnt/nvme/Projects/DataEngineer/news_analysis/spark/lib/hbase-spark-1.0.1-SNAPSHOT.jar"
 )
 
 lazy val root = (project in file("."))
