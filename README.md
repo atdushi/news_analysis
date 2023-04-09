@@ -51,8 +51,6 @@
 
 </details>
 
----
-
 ## План реализации
 
 ![График1](images/diagram.drawio.png)
