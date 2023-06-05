@@ -1,27 +1,31 @@
-import requests as req 
+#!/usr/bin/python3
+
+import requests as req
 from bs4 import BeautifulSoup, CData, Tag
 import time
 import tqdm
 import pickle
 import pandas as pd
 import json
+import fire
 
-sites = { 
-    'Фонтанка.ру' : ['https://www.fontanka.ru/fontanka.rss', ''],                  
-    'LENTA.RU' : ['https://lenta.ru/rss', ''],                  
-    'TASS' : ['https://tass.ru/rss/v2.xml', ''],
-    'ВЕДОМОСТИ' : ['https://www.vedomosti.ru/rss/news', '']           
+sites = {
+    'Фонтанка.ру': ['https://www.fontanka.ru/fontanka.rss', ''],
+    'LENTA.RU': ['https://lenta.ru/rss', ''],
+    'TASS': ['https://tass.ru/rss/v2.xml', ''],
+    'ВЕДОМОСТИ': ['https://www.vedomosti.ru/rss/news', '']
 }
+
 
 # parsing
 
 def parse():
-    data = { "data" : [] }
-        
+    data = {"data": []}
+
     for site in range(len(sites)):
-        
+
         url = list(sites.values())[site][0]
-                
+
         resp = req.get(url)
 
         soup = BeautifulSoup(resp.content, features="xml")
@@ -36,6 +40,7 @@ def parse():
             })
 
     return pd.DataFrame(data['data'])
+
 
 df = parse()
 
@@ -68,6 +73,7 @@ from kafka import KafkaProducer
 producer = KafkaProducer(bootstrap_servers='localhost:9092')
 topic = 'foobar'
 
+
 def write_to_kafka(df):
     hm = {}
     for _, row in df.iterrows():
@@ -75,9 +81,10 @@ def write_to_kafka(df):
         hm["title"] = row["title"]
         hm["site"] = row["site"]
         hm["pub_date"] = row["parsed_date"]
-        hm["day_of_week"] = row["day_of_week"]        
+        hm["day_of_week"] = row["day_of_week"]
         producer.send(topic, json.dumps(hm).encode('utf-8'))
         producer.flush()
+
 
 # hbase
 
@@ -85,6 +92,7 @@ import happybase
 
 connection = happybase.Connection('localhost')
 table = connection.table('news')
+
 
 def write_to_hbase(df):
     for i, row in df.iterrows():
@@ -94,19 +102,28 @@ def write_to_hbase(df):
             b"cf:site": str.encode(row["site"]),
             b"cf:pub_date": str.encode(row["parsed_date"]),
             b"cf:day_of_week": str.encode(row["day_of_week"])
-            })
+        })
+
 
 # enums
 
-from enum import Enum
+from enum import IntEnum
 
-class DataLoadingMode(Enum):
+
+class DataLoadingMode(IntEnum):
     Incremental = 1
     Initializing = 2
 
-data_loading_mode = DataLoadingMode.Initializing
 
-if data_loading_mode == DataLoadingMode.Initializing:
-    write_to_hbase(df_news)
-else:
-    write_to_kafka(df_news)
+def start_writing(mode=DataLoadingMode.Initializing):
+    if mode == DataLoadingMode.Initializing:
+        print('Writing to HBase...')
+        write_to_hbase(df_news)
+    else:
+        print('Writing to Kafka...')
+        write_to_kafka(df_news)
+    print('Done writing.')
+
+
+if __name__ == '__main__':
+    fire.Fire(start_writing)
