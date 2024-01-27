@@ -190,8 +190,8 @@ from hbase.news limit 10;
 <details>
   <summary>Screenshots</summary>
   <img src="/pubnews/images/drill.png"/>
-  <img src="/pubnews/images/drill_query"/>
-  <img src="/pubnews/images/drill_result"/>
+  <img src="/pubnews/images/drill_query.png"/>
+  <img src="/pubnews/images/drill_result.png"/>
 </details>
 
 ## Spark
