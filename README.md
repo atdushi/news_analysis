@@ -237,13 +237,16 @@ from hbase.news limit 10;
 - Витрины 1, 2:
 
   <img src="/pubnews/images/dataset_1_2.png"/>
+  <br/>
 
 - Витрина 3:
 
   <img src="/pubnews/images/dataset_3.png"/>
+  <br/>
 
 - Витрина 4:
 
   <img src="/pubnews/images/dataset_4.png"/>
+  <br/>
 
 </details>
