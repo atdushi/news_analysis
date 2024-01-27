@@ -236,14 +236,14 @@ from hbase.news limit 10;
 
 - Витрины 1, 2:
 
-  ![dataset12](./images/dataset_1_2.png)
+  <img src="/pubnews/images/dataset_1_2.png"/>
 
 - Витрина 3:
 
-  ![dataset3](./images/dataset_3.png)
+  <img src="/pubnews/images/dataset_3.png"/>
 
 - Витрина 4:
 
-  ![dataset4](./images/dataset_4.png)
+  <img src="/pubnews/images/dataset_4.png"/>
 
 </details>
